@@ -10,7 +10,10 @@
         }
     ],
     "require": {
-        "php": "^8.4.0"
+        "php": "^8.4.0",
+        "guzzlehttp/guzzle": "^7",
+        "nesbot/carbon": "^3",
+        "lezhnev74/pasvl": "^1"
     },
     "require-dev": {
         "laravel/pint": "^1.24.0",
@@ -23,7 +26,7 @@
     },
     "autoload": {
         "psr-4": {
-            "NunoMaduro\\SkeletonPhp\\": "src/"
+            "Raorsa\\SesameTimeAPIV2\\": "src/"
         }
     },
     "autoload-dev": {
