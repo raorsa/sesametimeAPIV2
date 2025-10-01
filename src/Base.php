@@ -54,7 +54,7 @@ abstract class Base
     private function call(string $path, string $method,?array $body=null): array{
         $params = ['headers' => ['Authorization' => "Bearer ".$this->token]];
         if(!is_null($body)){
-            $params['body'] = json_encode($body);
+            $params['body'] = json_encode($body, JSON_THROW_ON_ERROR);
         }
         $response = $this->client->request($method, $path, $params);
 
