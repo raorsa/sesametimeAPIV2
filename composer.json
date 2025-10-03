@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "php": "^8.4.0",
+        "php": "^8.3",
         "guzzlehttp/guzzle": "^7",
         "nesbot/carbon": "^3",
         "lezhnev74/pasvl": "^1"
