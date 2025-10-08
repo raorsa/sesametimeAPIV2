@@ -76,6 +76,7 @@ class Company extends Base
 
 
     /**
+     * @param string $userId
      * @return array<string, string>
      * @throws JsonException
      * @throws Exception
