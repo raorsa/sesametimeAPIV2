@@ -1,12 +1,12 @@
 {
-    "name": "nunomaduro/skeleton-php",
-    "description": "A skeleton repository for my packages",
-    "keywords": ["php", "skeleton", "package"],
+    "name": "raorsa/sesametimeAPIV2",
+    "description": "Sesame php client APIv2",
+    "keywords": ["php", "api", "sesame"],
     "license": "MIT",
     "authors": [
         {
-            "name": "Nuno Maduro",
-            "email": "enunomaduro@gmail.com"
+            "name": "Josevi Canet",
+            "email": "jvcanet@raorsa.es"
         }
     ],
     "require": {
