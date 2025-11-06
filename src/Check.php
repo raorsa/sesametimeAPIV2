@@ -60,15 +60,17 @@ class Check extends Base
             2 => [],
         ];
         $output = [];
+
         foreach ($checks as $check) {
-            $merged[$check["Check"]['type']][] = $check["Check"]["date"];
+            $merged[count($merged[1]) > count($merged[2]) ? 2 : 1][] = $check["Check"]["date"];
         }
+
         for ($i = 0; $i < count($merged[1]); $i++) {
             $start = Carbon::parse($merged[1][$i]);
             $end = Carbon::parse($merged[2][$i]);
             $diff = $start->diffInSeconds($end);
-            $day = $start->format('Y-m-d')->toDateString();
-            if (isset($output[$day])) {
+            $day = (string) $start->format('Y-m-d');
+            if (!isset($output[$day])) {
                 $output[$day] = [];
             }
             $output[$day][] = $diff;
@@ -84,6 +86,7 @@ class Check extends Base
     {
         $merged = self::mergeChecksSessions($checks);
         $output = [];
+
         foreach ($merged as $day => $diffs) {
             $output[$day] = array_sum($diffs);
         }
