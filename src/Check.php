@@ -15,16 +15,18 @@ class Check extends Base
      * @throws JsonException
      * @return array<string, string>
      */
-    public function create(string $userId, Carbon $date, ?string $type=null, ?string $comment=null): array{
-        return $this->postCall(self::GROUP.'/adm_createcheck/', ['userId' => $userId, 'date' => $date->timestamp, 'type' => $type, 'comment' => $comment]);
+    public function create(string $userId, Carbon $date, ?string $type = null, ?string $comment = null): array
+    {
+        return $this->postCall(self::GROUP . '/adm_createcheck/', ['userId' => $userId, 'date' => $date->timestamp, 'type' => $type, 'comment' => $comment]);
     }
 
     /**
      * @throws GuzzleException
      * @throws JsonException
      */
-    public function delete(Carbon $start, Carbon $end, string $userId): bool{
-        $this->postCall(self::GROUP.'/adm_deletebetweendates/', ['userId' => $userId, 'start' => $start->timestamp, 'end' => $end->timestamp]);
+    public function delete(Carbon $start, Carbon $end, string $userId): bool
+    {
+        $this->postCall(self::GROUP . '/adm_deletebetweendates/', ['userId' => $userId, 'start' => $start->timestamp, 'end' => $end->timestamp]);
         return true;
     }
 
@@ -33,8 +35,9 @@ class Check extends Base
      * @throws JsonException
      * @return array<string, string>
      */
-    public function get(?Carbon $start=null, ?Carbon $end=null, ?string $userId=null, ?string $departmentId=null, ?string $companyId=null): array{
-        return $this->postCall(self::GROUP.'/adm_getchecksbywhere/', ['userId' => $userId,'departmentId' => $departmentId,'companyId' => $companyId,'startAt'=>$start->timestamp??null,'endAt'=>$end->timestamp??null ]);
+    public function get(?Carbon $start = null, ?Carbon $end = null, ?string $userId = null, ?string $departmentId = null, ?string $companyId = null): array
+    {
+        return $this->postCall(self::GROUP . '/adm_getchecksbywhere/', ['userId' => $userId, 'departmentId' => $departmentId, 'companyId' => $companyId, 'startAt' => $start->timestamp ?? null, 'endAt' => $end->timestamp ?? null]);
     }
 
     /**
@@ -42,8 +45,49 @@ class Check extends Base
      * @throws JsonException
      * @return array<string, string>
      */
-    public function update(string $checkId, Carbon $date, ?string $comment=null): array{
-        return $this->postCall(self::GROUP.'/adm_updateCheck/', ['checkId' => $checkId,'date'=>$date->timestamp,'comment' => $comment ]);
+    public function update(string $checkId, Carbon $date, ?string $comment = null): array
+    {
+        return $this->postCall(self::GROUP . '/adm_updateCheck/', ['checkId' => $checkId, 'date' => $date->timestamp, 'comment' => $comment]);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function mergeChecksSessions(array $checks): array
+    {
+        $merged = [
+            1 => [],
+            2 => [],
+        ];
+        $output = [];
+        foreach ($checks as $check) {
+            $merged[$check["Check"]['type']][] = $check["Check"]["date"];
+        }
+        for ($i = 0; $i < count($merged[1]); $i++) {
+            $start = Carbon::parse($merged[1][$i]);
+            $end = Carbon::parse($merged[2][$i]);
+            $diff = $start->diffInSeconds($end);
+            $day = $start->format('Y-m-d')->toDateString();
+            if (isset($output[$day])) {
+                $output[$day] = [];
+            }
+            $output[$day][] = $diff;
+
+        }
+        return $output;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function mergeChecksDays(array $checks): array
+    {
+        $merged = self::mergeChecksSessions($checks);
+        $output = [];
+        foreach ($merged as $day => $diffs) {
+            $output[$day] = array_sum($diffs);
+        }
+        return $output;
     }
 }
 
