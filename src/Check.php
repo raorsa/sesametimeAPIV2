@@ -51,7 +51,7 @@ class Check extends Base
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, array<string, array<int>>>
      */
     public static function mergeChecksSessions(array $checks): array
     {
@@ -85,7 +85,7 @@ class Check extends Base
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, array<string, int>>
      */
     public static function mergeChecksDays(array $checks): array
     {
