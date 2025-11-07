@@ -55,26 +55,31 @@ class Check extends Base
      */
     public static function mergeChecksSessions(array $checks): array
     {
-        $merged = [
-            1 => [],
-            2 => [],
-        ];
+        $merged = [];
         $output = [];
 
         foreach ($checks as $check) {
-            $merged[count($merged[1]) > count($merged[2]) ? 2 : 1][] = $check["Check"]["date"];
-        }
-
-        for ($i = 0; $i < count($merged[1]); $i++) {
-            $start = Carbon::parse($merged[1][$i]);
-            $end = Carbon::parse($merged[2][$i]);
-            $diff = $start->diffInSeconds($end);
-            $day = (string) $start->format('Y-m-d');
-            if (!isset($output[$day])) {
-                $output[$day] = [];
+            if (!isset($merged[$check["Check"]["user_id"]])) {
+                $merged[$check["Check"]["user_id"]] = [1 => [], 2 => []];
             }
-            $output[$day][] = $diff;
+            $merged[$check["Check"]["user_id"]][count($merged[$check["Check"]["user_id"]][1]) > count($merged[$check["Check"]["user_id"]][2]) ? 2 : 1][] = $check["Check"]["date"];
+        }
+        foreach ($merged as $user_id => $checks) {
+            for ($i = 0; $i < count($checks[1]); $i++) {
+                $start = Carbon::parse($checks[1][$i]);
+                if (isset($checks[2][$i])) {
+                    $end = Carbon::parse($checks[2][$i]);
+                    $diff = $start->diffInSeconds($end);
+                } else {
+                    $diff = 0;
+                }
 
+                $day = (string) $start->format('Y-m-d');
+                if (!isset($output[$user_id][$day])) {
+                    $output[$user_id][$day] = [];
+                }
+                $output[$user_id][$day][] = $diff;
+            }
         }
         return $output;
     }
@@ -87,8 +92,10 @@ class Check extends Base
         $merged = self::mergeChecksSessions($checks);
         $output = [];
 
-        foreach ($merged as $day => $diffs) {
-            $output[$day] = array_sum($diffs);
+        foreach ($merged as $user_id => $checks) {
+            foreach ($checks as $day => $diffs) {
+                $output[$user_id][$day] = array_sum($diffs);
+            }
         }
         return $output;
     }
